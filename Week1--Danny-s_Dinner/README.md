@@ -277,9 +277,20 @@ END AS Ranking
 FROM CTE;
 ```
 
-## Findings
+# **Insights**
 
+* Customer A spent most amount $76 followed by Customer B-$74
 
-## Reports
+* Customer B is the most frequent customer
+
+* ramen is the most purchased item with 8 times.
+
+* Popular item for each customer A-ramen,B-curry,C-ramen
+
+* Customer A purchase percentage increased to 104%  and B decreased by 15% after  becoming a member
+
+* Customer preference changed after they becoming a member.
+
+* Customer B leads points table base on purchase value and product value with 940 points and A with 860 and C with 360 points.
 
 
