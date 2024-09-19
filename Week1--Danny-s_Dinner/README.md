@@ -1,227 +1,285 @@
-# Retail Sales Analysis SQL Project
+# Danny's Diner Analysis
 
 ## Project Overview
+**Project Title** : Danny's Diner Analysis   
+Database :- `dannys_diner_db`
 
-**Project Title**: Retail Sales Analysis  
-**Level**: Beginner  
-**Database**: `p1_retail_db`
+## **Introduction**
+Danny seriously loves Japanese food so in the beginning of 2021, he decides to embark upon a risky venture and opens up a cute little restaurant that sells his 3 favourite foods: sushi, curry and ramen. 
 
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
+Danny’s Diner is in need of  assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
+
+
+## **Problem Statement**
+
+Danny wants to use the data to answer a few simple questions about his customers, especially about their visiting patterns, how much money they’ve spent and also which menu items are their favourite. Having this deeper connection with his customers will help him deliver a better and more personalised experience for his loyal customers.
+Danny has shared with you 3 key datasets for this case study:
+sales,members,menu
+
+
+**Skills** :-  
+* Aggregate functions
+* Window functions
+* Row_number
+* Between
+* CTE 
+* Joins
+* Case Statement
+* Where clause
+* Group by clause
+* Order by clause
+* Limit
 
 ## Objectives
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
-3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
+1. **Set up database**: Create and populate a retail sales database with the provided sales data.
+2. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
 
 ## Project Structure
 
 ### 1. Database Setup
 
-- **Database Creation**: The project starts by creating a database named `p1_retail_db`.
-- **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
+- **Database Creation**: The project starts by creating a database named  `dannys_diner_db`.
+- **Table Creation**:
+* `sales` :- This table captures all customer_id level purchases with an corresponding order_date and product_id information for when and what menu items were ordered.
+* `menu` :- Theis table maps the product_id to the actual product_name and price of each menu item.
+
+* `members` :- The final members table captures the join_date when a customer_id joined the beta version of the Danny’s Diner loyalty program.
 
 ```sql
-CREATE DATABASE p1_retail_db;
+CREATE DATABASE dannys_diner_db;
 
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
-    quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
+CREATE TABLE sales (
+  `customer_id` VARCHAR(1),
+  `order_date` DATE,
+  `product_id` INT
 );
+
+INSERT INTO sales
+  (`customer_id`, `order_date`, `product_id`)
+VALUES
+  ('A', '2021-01-01', '1'),
+  ('A', '2021-01-01', '2'),
+  ('A', '2021-01-07', '2'),
+  ('A', '2021-01-10', '3'),
+  ('A', '2021-01-11', '3'),
+  ('A', '2021-01-11', '3'),
+  ('B', '2021-01-01', '2'),
+  ('B', '2021-01-02', '2'),
+  ('B', '2021-01-04', '1'),
+  ('B', '2021-01-11', '1'),
+  ('B', '2021-01-16', '3'),
+  ('B', '2021-02-01', '3'),
+  ('C', '2021-01-01', '3'),
+  ('C', '2021-01-01', '3'),
+  ('C', '2021-01-07', '3');
+ 
+SELECT * FROM sales;
+
+CREATE TABLE menu (
+  `product_id` INTEGER,
+  `product_name` VARCHAR(5),
+  `price` INTEGER
+);
+
+INSERT INTO menu
+  (`product_id`, `product_name`, `price`)
+VALUES
+  ('1', 'sushi', '10'),
+  ('2', 'curry', '15'),
+  ('3', 'ramen', '12');
+  
+SELECT * FROM menu;
+
+CREATE TABLE members (
+  `customer_id` VARCHAR(1),
+  `join_date` DATE
+);
+
+INSERT INTO members
+  (`customer_id`, `join_date`)
+VALUES
+  ('A', '2021-01-07'),
+  ('B', '2021-01-09');
+  
+SELECT * FROM members;
 ```
 
-### 2. Data Exploration & Cleaning
+### 2. Data Analysis & Findings
 
-- **Record Count**: Determine the total number of records in the dataset.
-- **Customer Count**: Find out how many unique customers are in the dataset.
-- **Category Count**: Identify all unique product categories in the dataset.
-- **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
-
+**1.What is the total amount each customer spent at the restaurant?**
 ```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
-
-SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-
-DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+SELECT s.customer_id, SUM(m.price) AS total_amount 
+FROM  sales s
+JOIN  menu m
+	ON s.product_id=m.product_id
+GROUP BY s.customer_id;
 ```
 
-### 3. Data Analysis & Findings
-
-The following SQL queries were developed to answer specific business questions:
-
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
+2.How many days has each customer visited the restaurant?
 ```sql
-SELECT *
-FROM retail_sales
-WHERE sale_date = '2022-11-05';
+SELECT  customer_id, COUNT(DISTINCT order_date) AS days 
+FROM sales
+GROUP BY customer_id;
 ```
 
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
+3.What was the first item from the menu purchased by each customer?
 ```sql
-SELECT 
-  *
-FROM retail_sales
-WHERE 
-    category = 'Clothing'
-    AND 
-    TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
-    AND
-    quantity >= 4
+WITH CTE AS (
+SELECT s.customer_id,s.product_id,m.product_name,
+ROW_NUMBER() OVER(PARTITION BY s.customer_id ORDER BY s.order_date) AS num
+FROM sales s 
+JOIN  menu m 
+ON s.product_id=m.product_id)
+SELECT customer_id,product_name
+FROM CTE
+WHERE num=1;
 ```
 
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
+4.What is the most purchased item on the menu and how many times was it purchased by all customers?
 ```sql
-SELECT 
-    category,
-    SUM(total_sale) as net_sale,
-    COUNT(*) as total_orders
-FROM retail_sales
-GROUP BY 1
+SELECT m.product_name,COUNT(*) AS purchase_count
+FROM sales s 
+JOIN menu m
+ON s.product_id=m.product_id
+GROUP BY m.product_name
+ORDER BY purchase_count DESC
+LIMIT 1;
 ```
 
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
+5.Which item was the most popular for each customer?
 ```sql
-SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
-WHERE category = 'Beauty'
+WITH CTE AS (
+SELECT s.customer_id,m.product_name,COUNT(product_name) AS product_count,
+ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY COUNT(product_name) DESC) AS num
+FROM sales s 
+JOIN menu m
+ON s.product_id=m.product_id
+GROUP BY s.customer_id,m.product_name)
+SELECT customer_id,product_name
+FROM CTE
+WHERE num=1;
 ```
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
+6.Which item was purchased first by the customer after they became a member?
 ```sql
-SELECT * FROM retail_sales
-WHERE total_sale > 1000
+WITH CTE AS (
+SELECT s.customer_id,s.order_date,s.product_id,m2.product_name,
+ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY order_date) AS num
+FROM sales s
+JOIN members m
+ON s.customer_id = m.customer_id
+JOIN menu m2
+ON s.product_id=m2.product_id
+WHERE s.order_date > m.join_date)
+SELECT customer_id,product_name
+FROM CTE
+WHERE num=1;
 ```
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
+7.Which item was purchased just before the customer became a member?
 ```sql
-SELECT 
-    category,
-    gender,
-    COUNT(*) as total_trans
-FROM retail_sales
-GROUP 
-    BY 
-    category,
-    gender
-ORDER BY 1
+WITH CTE AS (
+SELECT s.customer_id, s.order_date, s.product_id,m2.product_name,
+ROW_NUMBER() OVER(PARTITION BY customer_id ORDER BY order_date ) AS num
+FROM sales s
+LEFT JOIN members m
+ON s.customer_id = m.customer_id
+JOIN menu m2
+ON s.product_id=m2.product_id
+WHERE s.order_date < m.join_date)
+SELECT customer_id,product_name
+FROM CTE
+WHERE num=1;
 ```
 
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
+8.What is the total items and amount spent for each member before they became a member?
 ```sql
-SELECT 
-       year,
-       month,
-    avg_sale
-FROM 
-(    
-SELECT 
-    EXTRACT(YEAR FROM sale_date) as year,
-    EXTRACT(MONTH FROM sale_date) as month,
-    AVG(total_sale) as avg_sale,
-    RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) as rank
-FROM retail_sales
-GROUP BY 1, 2
-) as t1
-WHERE rank = 1
+SELECT s.customer_id,COUNT(s.product_id) AS Total_items, SUM(m.price) AS Spent_amount
+FROM sales s
+JOIN menu m
+ON s.product_id=m.product_id
+JOIN members m2
+ON s.customer_id=m2.customer_id
+WHERE s.order_date < m2.join_date
+GROUP BY s.customer_id
+ORDER BY s.customer_id;
 ```
 
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
+9.If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 ```sql
-SELECT 
-    customer_id,
-    SUM(total_sale) as total_sales
-FROM retail_sales
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5
+WITH CTE AS (
+SELECT s.customer_id,m.product_name,SUM(m.price) AS Spent_amount,
+CASE
+WHEN product_name="sushi" THEN SUM(m.price)*20
+ELSE SUM(m.price)*10
+END AS Points
+FROM sales s
+JOIN menu m
+ON s.product_id=m.product_id
+GROUP BY s.customer_id,m.product_name)
+SELECT customer_id,SUM(Points) AS Points
+FROM CTE
+GROUP BY customer_id;
 ```
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
+10.In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 ```sql
-SELECT 
-    category,    
-    COUNT(DISTINCT customer_id) as cnt_unique_cs
-FROM retail_sales
-GROUP BY category
+WITH CTE AS (
+SELECT s.customer_id,s.order_date,m2.join_date,m.product_name,SUM(m.price) AS Spent_amount,
+CASE
+WHEN s.order_date BETWEEN m2.join_date AND DATE_ADD(m2.join_date, INTERVAL 7 DAY) THEN SUM(m.price)*20
+ELSE SUM(m.price)*10
+END AS Initial_points
+FROM sales s
+JOIN menu m 
+ON s.product_id=m.product_id
+JOIN members m2
+ON s.customer_id=m2.customer_id
+WHERE MONTH(s.order_date)=1
+GROUP BY s.customer_id,s.order_date,m2.join_date,m.product_name
+ORDER BY s.customer_id,s.order_date)
+SELECT customer_id,SUM(Initial_points) AS Points
+FROM CTE
+GROUP BY customer_id;
+```
+**Bonus Questions**
+```sql
+--  creating basic data tables
+
+SELECT s.customer_id,s.order_date,m.product_name,m.price,
+IF(s.order_date>=m2.join_date ,"Y","N") AS member
+FROM sales s
+LEFT JOIN menu m 
+ON s.product_id=m.product_id
+LEFT JOIN members m2
+ON s.customer_id=m2.customer_id
+ORDER BY s.customer_id,s.order_date,m.product_name;
 ```
 
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
+**Ranking of customers excluding non-member purchases**
+
 ```sql
-WITH hourly_sale
-AS
-(
+WITH CTE AS (
+SELECT s.customer_id,s.order_date,m.product_name,m.price,
+IF(s.order_date>=m2.join_date ,"Y","N") AS member
+FROM sales s
+LEFT JOIN menu m 
+ON s.product_id=m.product_id
+LEFT JOIN members m2
+ON s.customer_id=m2.customer_id
+ORDER BY s.customer_id,s.order_date,m.product_name)
 SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
-FROM retail_sales
-)
-SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM hourly_sale
-GROUP BY shift
+CASE
+WHEN  member="Y" THEN RANK() OVER(PARTITION BY customer_id,member ORDER BY order_date) 
+ELSE "NULL"
+END AS Ranking
+FROM CTE;
 ```
 
 ## Findings
 
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
 
 ## Reports
 
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
 
-## Conclusion
-
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
-
-## How to Use
-
-1. **Clone the Repository**: Clone this project repository from GitHub.
-2. **Set Up the Database**: Run the SQL scripts provided in the `database_setup.sql` file to create and populate the database.
-3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
-4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
-
-## Author - Zero Analyst
-
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
-
-### Stay Updated and Join the Community
-
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
-
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
-
-Thank you for your support, and I look forward to connecting with you!
