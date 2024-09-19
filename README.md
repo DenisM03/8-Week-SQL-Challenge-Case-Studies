@@ -1,1 +1,3 @@
-# Sql_Project--Danny-s_Dinner_Analysis
+# 8 Week SQL Challenge Case Studies
+
+## **Case Study #1 - Danny's Diner**
