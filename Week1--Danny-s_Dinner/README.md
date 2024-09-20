@@ -16,6 +16,10 @@ Danny wants to use the data to answer a few simple questions about his customers
 Danny has shared with you 3 key datasets for this case study:
 sales,members,menu
 
+## Objectives
+
+1. **Set up database**: Create and populate a retail sales database with the provided sales data.
+2. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
 
 **Skills** :-  
 * Aggregate functions
@@ -29,11 +33,6 @@ sales,members,menu
 * Group by clause
 * Order by clause
 * Limit
-
-## Objectives
-
-1. **Set up database**: Create and populate a retail sales database with the provided sales data.
-2. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
 
 ## Project Structure
 
@@ -226,10 +225,11 @@ GROUP BY customer_id;
 10.In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 ```sql
 WITH CTE AS (
-SELECT s.customer_id,s.order_date,m2.join_date,m.product_name,SUM(m.price) AS Spent_amount,
+SELECT s.customer_id,s.order_date,m2.join_date,m.product_name,m.price,
 CASE
-WHEN s.order_date BETWEEN m2.join_date AND DATE_ADD(m2.join_date, INTERVAL 7 DAY) THEN SUM(m.price)*20
-ELSE SUM(m.price)*10
+WHEN s.order_date BETWEEN m2.join_date AND DATE_ADD(m2.join_date, INTERVAL 6 DAY) THEN m.price*20
+WHEN m.product_name = "sushi" THEN 2*10*m.price
+ELSE m.price*10
 END AS Initial_points
 FROM sales s
 JOIN menu m 
@@ -237,11 +237,11 @@ ON s.product_id=m.product_id
 JOIN members m2
 ON s.customer_id=m2.customer_id
 WHERE MONTH(s.order_date)=1
-GROUP BY s.customer_id,s.order_date,m2.join_date,m.product_name
-ORDER BY s.customer_id,s.order_date)
+ORDER BY s.customer_id,s.order_date,m2.join_date)
 SELECT customer_id,SUM(Initial_points) AS Points
 FROM CTE
-GROUP BY customer_id;
+GROUP BY customer_id
+ORDER BY Customer_id;
 ```
 **Bonus Questions**
 ```sql
