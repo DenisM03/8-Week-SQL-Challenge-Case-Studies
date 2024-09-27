@@ -1,8 +1,6 @@
 # Danny's Diner Analysis
 
-## Project Overview
-**Project Title** : Danny's Diner Analysis   
-Database :- `dannys_diner_db`
+
 
 ## **Introduction**
 Danny seriously loves Japanese food so in the beginning of 2021, he decides to embark upon a risky venture and opens up a cute little restaurant that sells his 3 favourite foods: sushi, curry and ramen. 
@@ -16,12 +14,7 @@ Danny wants to use the data to answer a few simple questions about his customers
 Danny has shared with you 3 key datasets for this case study:
 sales,members,menu
 
-## Objectives
-
-1. **Set up database**: Create and populate a retail sales database with the provided sales data.
-2. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
-
-**Skills** :-  
+## **Skills** :-  
 * Aggregate functions
 * Window functions
 * Row_number
@@ -34,12 +27,7 @@ sales,members,menu
 * Order by clause
 * Limit
 
-## Project Structure
-
-### 1. Database Setup
-
-- **Database Creation**: The project starts by creating a database named  `dannys_diner_db`.
-- **Table Creation**:
+## **Table Overview**:
 * `sales` :- This table captures all customer_id level purchases with an corresponding order_date and product_id information for when and what menu items were ordered.
 * `menu` :- Theis table maps the product_id to the actual product_name and price of each menu item.
 
@@ -104,7 +92,7 @@ VALUES
 SELECT * FROM members;
 ```
 
-### 2. Data Analysis & Findings
+## Data Analysis & Findings
 
 **1.What is the total amount each customer spent at the restaurant?**
 ```sql
