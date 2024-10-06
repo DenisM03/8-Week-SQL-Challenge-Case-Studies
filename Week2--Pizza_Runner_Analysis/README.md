@@ -1,227 +1,118 @@
-# Retail Sales Analysis SQL Project
+# **Pizza Runner Analysis**
 
-## Project Overview
+# **Project Overview**
+Danny launched Pizza Runner after noticing an increasing demand for pizzas. 
+Danny wants to expand his new Pizza Empire. 
+So he started recruiting “runners” to deliver fresh pizza from Pizza Runner Headquarters to customers.
 
-**Project Title**: Retail Sales Analysis  
-**Level**: Beginner  
-**Database**: `p1_retail_db`
+Danny had a few years of experience as a Data Scientist, he prepared an entity relationship diagram of his database design but requires further assistance to clean his data and apply some calculations so he could optimize Pizza Runner’s operations.
 
-This project is designed to demonstrate SQL skills and techniques typically used by data analysts to explore, clean, and analyze retail sales data. The project involves setting up a retail sales database, performing exploratory data analysis (EDA), and answering specific business questions through SQL queries. This project is ideal for those who are starting their journey in data analysis and want to build a solid foundation in SQL.
+The Case Study is going to provide insights on Pizzas, Runner and customer experiences, ingredients, and pricing strategies to Danny.
 
-## Objectives
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
-3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
+## **Entity Relationship Diagram**
+![image](https://github.com/user-attachments/assets/e3f14b62-cdad-4f7a-a7e0-b5601155d85c)
 
-## Project Structure
+## **Table 1: runners**
+The runners table shows the registration_date for each new runner.
 
-### 1. Database Setup
 
-- **Database Creation**: The project starts by creating a database named `p1_retail_db`.
-- **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
 
-```sql
-CREATE DATABASE p1_retail_db;
+## **Table 2: customer_orders**
+Customer pizza orders are captured in the customer_orders table with 1 row for each  pizza that is part of the order.
 
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
-    quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
-);
-```
+The pizza_id relates to the type of pizza which was ordered whilst the exclusions are the ingredient_id values which should be removed from the pizza and the extras are the ingredient_id values which need to be added to the pizza.
 
-### 2. Data Exploration & Cleaning
+Note that customers can order multiple pizzas in a single order with varying exclusions and extras values even if the pizza is the same type!
 
-- **Record Count**: Determine the total number of records in the dataset.
-- **Customer Count**: Find out how many unique customers are in the dataset.
-- **Category Count**: Identify all unique product categories in the dataset.
-- **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
+The exclusions and extras columns will need to be cleaned up before using them in your queries.
 
-```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
+## **Table 3: runner_orders**
+After each orders are received through the system - they are assigned to a runner - however not all orders are fully completed and can be cancelled by the restaurant or the customer.
 
-SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+## **Table 4: pizza_names**
+At the moment - Pizza Runner only has 2 pizzas available the Meat Lovers or Vegetarian!
 
-DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-```
+## **Table 5: pizza_recipes**
+Each pizza_id has a standard set of toppings which are used as part of the pizza recipe.
 
-### 3. Data Analysis & Findings
+## **Table 6: pizza_toppings**
+This table contains all of the topping_name values with their corresponding topping_id value
 
-The following SQL queries were developed to answer specific business questions:
 
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
-```sql
-SELECT *
-FROM retail_sales
-WHERE sale_date = '2022-11-05';
-```
+# **Case Study Questions**
+This case study has LOTS of questions - they are broken up by area of focus including:
 
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
-```sql
-SELECT 
-  *
-FROM retail_sales
-WHERE 
-    category = 'Clothing'
-    AND 
-    TO_CHAR(sale_date, 'YYYY-MM') = '2022-11'
-    AND
-    quantity >= 4
-```
+- Pizza Metrics
+- Runner and Customer Experience
+- Ingredient Optimisation
+- Pricing and Ratings
 
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
-```sql
-SELECT 
-    category,
-    SUM(total_sale) as net_sale,
-    COUNT(*) as total_orders
-FROM retail_sales
-GROUP BY 1
-```
+# **Pizza Metrics**
 
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
-```sql
-SELECT
-    ROUND(AVG(age), 2) as avg_age
-FROM retail_sales
-WHERE category = 'Beauty'
-```
+![{675C3617-B0A1-4FEC-A55E-6DB86A7DC30D}](https://github.com/user-attachments/assets/68826853-119e-4da5-9707-969edf8ecba6)
 
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
-```sql
-SELECT * FROM retail_sales
-WHERE total_sale > 1000
-```
+# **INSIGHTS-Pizza Metrics**
+➡️ 14 pizzas were ordered in 10 orders.          
+➡️ Runner-1 has made the most successful deliveries followed by Runner-2.            
+➡️ 9 Meatlovers and 3 Vegetarian-type pizzas are successfully delivered.             
+➡️ Order-4 has ordered the most Meatlovers pizzas and order-5 ordered only Vegetarian type.          
+➡️ Maximum number of pizzas delivered is 3 for order-4.            
+➡️ 6 Pizza orders made changes and 6 with no change.                
+➡️ Only 1 pizza order had both exclusions and extras.                 
+➡️ Higher orders are placed during hours 13,18,21 and 23.                                  
+➡️ During weekdays most orders are placed on day 4 and day 7.        
 
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
-```sql
-SELECT 
-    category,
-    gender,
-    COUNT(*) as total_trans
-FROM retail_sales
-GROUP 
-    BY 
-    category,
-    gender
-ORDER BY 1
-```
+     
+# **Runner and Customer Experience**
 
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
-```sql
-SELECT 
-       year,
-       month,
-    avg_sale
-FROM 
-(    
-SELECT 
-    EXTRACT(YEAR FROM sale_date) as year,
-    EXTRACT(MONTH FROM sale_date) as month,
-    AVG(total_sale) as avg_sale,
-    RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) as rank
-FROM retail_sales
-GROUP BY 1, 2
-) as t1
-WHERE rank = 1
-```
+![{3F664A18-70D2-49FF-8371-D0165AA8E143}](https://github.com/user-attachments/assets/440b7731-e860-4bc4-aa76-a1498f02e6b5)
 
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
-```sql
-SELECT 
-    customer_id,
-    SUM(total_sale) as total_sales
-FROM retail_sales
-GROUP BY 1
-ORDER BY 2 DESC
-LIMIT 5
-```
+# **INSIGHTS-Runner and Customer Experience**
 
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
-```sql
-SELECT 
-    category,    
-    COUNT(DISTINCT customer_id) as cnt_unique_cs
-FROM retail_sales
-GROUP BY category
-```
+➡️ 3 Runners signed up for the first week.                     
+➡️ An average runner- 3 takes 10 minutes to pick up the pizza, runner-1 takes 15 minutes to pick up the pizza, and runner-2 takes 15 minutes to pick up the pizza 
+        
+➡️ Per order on average pizza runners have to travel 18.8 KM for order delivery.         
 
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
-```sql
-WITH hourly_sale
-AS
-(
-SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
-FROM retail_sales
-)
-SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM hourly_sale
-GROUP BY shift
-```
 
-## Findings
+# **Ingredient Optimisation**
 
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
+![{DD3C2194-D26A-41EE-BCD3-C326FE7AC015}](https://github.com/user-attachments/assets/36150d09-e0a5-4363-8180-8e50eb633a4a)
 
-## Reports
+# **INSIGHTS-Ingredient Optimisation**
 
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
+➡️ Cheese and Mushrooms are the standard ingredients for both pizzas.           
+➡️ The commonly added extra’s to the pizzas is Bacon.              
+➡️ The most common exclusion is Cheese.               
+➡️ Cheese and Mushrooms are the highly used ingredients in terms of quantity.               
 
-## Conclusion
+# **Pricing and Ratings**
 
-This project serves as a comprehensive introduction to SQL for data analysts, covering database setup, data cleaning, exploratory data analysis, and business-driven SQL queries. The findings from this project can help drive business decisions by understanding sales patterns, customer behavior, and product performance.
+![{308BC8D7-F54F-447A-83E5-378249258E0F}](https://github.com/user-attachments/assets/e67e972d-2a34-4a89-aa6b-a988c9db63cc)
 
-## How to Use
+# **INSIGHTS-Pricing and Ratings**
 
-1. **Clone the Repository**: Clone this project repository from GitHub.
-2. **Set Up the Database**: Run the SQL scripts provided in the `database_setup.sql` file to create and populate the database.
-3. **Run the Queries**: Use the SQL queries provided in the `analysis_queries.sql` file to perform your analysis.
-4. **Explore and Modify**: Feel free to modify the queries to explore different aspects of the dataset or answer additional business questions.
+➡️ If a Meat Lovers pizza costs $12 and a Vegetarian costs $10 and there were no charges for changes  runner-1 makes $70,runner-2 makes $56, and runner-3 makes $12.                   
+➡️ If there was an additional $1 charge for any pizza extras runner-1 makes $72,runner-2 makes $59, and runner-3 makes $13.              
+➡️ On average each runner had spent 41.36$ for the delivery charge. The Gross Profit made by each runners is  runner-1 earned $ 44.20,runner-2 made $20.90, and runner-3 made $9.00.          
 
-## Author - Zero Analyst
 
-This project is part of my portfolio, showcasing the SQL skills essential for data analyst roles. If you have any questions, feedback, or would like to collaborate, feel free to get in touch!
 
-### Stay Updated and Join the Community
 
-For more content on SQL, data analysis, and other data-related topics, make sure to follow me on social media and join our community:
 
-- **YouTube**: [Subscribe to my channel for tutorials and insights](https://www.youtube.com/@zero_analyst)
-- **Instagram**: [Follow me for daily tips and updates](https://www.instagram.com/zero_analyst/)
-- **LinkedIn**: [Connect with me professionally](https://www.linkedin.com/in/najirr)
-- **Discord**: [Join our community to learn and grow together](https://discord.gg/36h5f2Z5PK)
 
-Thank you for your support, and I look forward to connecting with you!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
