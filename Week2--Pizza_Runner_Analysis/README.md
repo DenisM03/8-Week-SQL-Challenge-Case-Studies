@@ -98,6 +98,21 @@ This case study has LOTS of questions - they are broken up by area of focus incl
 ➡️ On average each runner had spent 41.36$ for the delivery charge. The Gross Profit made by each runners is  runner-1 earned $ 44.20,runner-2 made $20.90, and runner-3 made $9.00.          
 
 
+# Recommendations
+
+- Increase production and resources on weekend days, and produce more meat-lovers pizza.
+  
+- Introduce time-based promotions or discounts during off-peak hours to balance demand and maximize sales.
+  
+- Implement route optimization tools and GPS tracking to guide runners along the fastest delivery routes, reducing delivery fees.
+  
+- Streamline kitchen workflows for larger orders to maintain preparation efficiency.
+  
+- Update the menu to offer pre-built customizable options.
+  
+- Avoid Cheese in Meat-lovers Pizza since it is mostly excluded.
+  
+- Analyze the reasons behind cancellation orders to identify pain points.                
 
 
 
